@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYNAPSE — подключите разум</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f2f1ee;color:#0b0b0c;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;justify-content:space-between;padding:26px 4vw;font:700 13px Syncopate;letter-spacing:.35em}
+nav span{font:400 11px Inter;letter-spacing:.3em;color:#777}
+.scene{height:500vh;position:relative}
+.st{position:sticky;top:0;height:100vh;overflow:hidden}
+#cv{position:absolute;inset:0;width:100%;height:100%;z-index:2}
+.face{position:absolute;left:50%;top:50%;width:min(440px,70vw);aspect-ratio:3/4;transform:translate(-50%,-50%);z-index:3;-webkit-mask:radial-gradient(ellipse 50% 55% at 50% 45%,#000 55%,transparent 75%);mask:radial-gradient(ellipse 50% 55% at 50% 45%,#000 55%,transparent 75%)}
+.face img{width:100%;height:100%;object-fit:cover;filter:grayscale(.85) contrast(1.1) brightness(1.08)}
+.word{position:absolute;z-index:3;font:700 clamp(40px,9vw,150px)/1 Syncopate;letter-spacing:-.02em;white-space:nowrap;pointer-events:none}
+#w1{left:4vw;top:16vh}#w2{right:4vw;bottom:14vh;text-align:right}
+.word i{font-style:normal;display:inline-block;opacity:0;transform:translateY(40px);transition:.8s cubic-bezier(.2,.8,.2,1)}
+.word.on i{opacity:1;transform:none}
+.cap{position:absolute;z-index:3;left:4vw;bottom:8vh;max-width:330px;font-size:14px;line-height:1.7;color:#555}
+.cap b{color:#0b0b0c;font-weight:500}
+.meter{position:absolute;right:4vw;top:50%;transform:translateY(-50%);z-index:3;display:flex;flex-direction:column;gap:12px;font:400 10px Syncopate;letter-spacing:.2em;color:#999}
+.meter div.on{color:#1d6bff}
+.after{background:#0b0b0c;color:#f2f1ee;padding:20vh 6vw;display:grid;grid-template-columns:repeat(3,1fr);gap:4vw}
+.after h3{font:700 18px Syncopate;letter-spacing:.1em;margin:20px 0 14px}
+.after p{color:#9a9a9a;font-weight:300;line-height:1.7}
+.after span{font:700 60px/1 Syncopate;color:#1d6bff}
+@media(max-width:800px){.after{grid-template-columns:1fr;gap:60px}}
+.cta{background:#0b0b0c;color:#fff;text-align:center;padding:10vh 6vw 22vh}
+.cta h2{font:700 clamp(36px,7vw,110px)/1 Syncopate;letter-spacing:-.02em}
+.cta a{display:inline-block;margin-top:40px;padding:18px 40px;background:#1d6bff;color:#fff;text-decoration:none;font:700 12px Syncopate;letter-spacing:.25em}
+</style>
+</head>
+<body>
+<nav>SYNAPSE<span>НЕЙРОИНТЕРФЕЙС · 2030</span></nav>
+<section class="scene" id="scene"><div class="st">
+  <div class="face" id="face"><img src="img/avatar.jpg" alt=""></div>
+  <canvas id="cv"></canvas>
+  <div class="word" id="w1"></div>
+  <div class="word" id="w2"></div>
+  <div class="cap" id="cap"><b>Фаза 1.</b> Интерфейс считывает 86 миллиардов нейронов. Листайте, чтобы подключиться.</div>
+  <div class="meter" id="meter"><div>01 СКАН</div><div>02 СВЯЗЬ</div><div>03 ПОТОК</div><div>04 ЕДИНСТВО</div></div>
+</div></section>
+<section class="after">
+  <div><span>01</span><h3>Мысль → действие</h3><p>Управляйте устройствами силой намерения, без экрана и клавиатуры.</p></div>
+  <div><span>02</span><h3>Память в облаке</h3><p>Каждое воспоминание — в безопасности и всегда под рукой.</p></div>
+  <div><span>03</span><h3>Общий разум</h3><p>Делитесь идеями так же быстро, как думаете.</p></div>
+</section>
+<section class="cta"><h2>CONNECT.</h2><a data-tl href="#">Подключиться</a></section>
+<script src="link.js"></script>
+<script>
+const cv=document.getElementById('cv'),c=cv.getContext('2d'),DPR=Math.min(devicePixelRatio,2);let W,H;
+function rs(){W=cv.width=innerWidth*DPR;H=cv.height=innerHeight*DPR}rs();addEventListener('resize',rs);
+function letters(el,txt){el.innerHTML=[...txt].map((ch,i)=>`<i style="transition-delay:${i*.05}s">${ch}</i>`).join('')}
+letters(document.getElementById('w1'),'SYNAPSE');letters(document.getElementById('w2'),'CONNECT');
+// cables: start at head points, go to random edges
+const cables=Array.from({length:46},(_,i)=>{const a=-Math.PI*.95+Math.random()*Math.PI*.9;const side=Math.random();
+  return{a,ex:Math.random(),edge:Math.floor(Math.random()*3),w:2+Math.random()*7,ph:Math.random()*10,pulse:Math.random()}});
+// sphere points
+const S=Array.from({length:900},()=>{const u=Math.random()*2-1,th=Math.random()*Math.PI*2,r=Math.sqrt(1-u*u);return[r*Math.cos(th),u,r*Math.sin(th)]});
+const clamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)),seg=(p,a,b)=>clamp((p-a)/(b-a));
+let t=0;
+function frame(){t+=.016;
+  const r=document.getElementById('scene').getBoundingClientRect(),p=clamp(-r.top/(r.height-innerHeight));
+  c.clearRect(0,0,W,H);
+  const cx=W/2,cy=H*.42,headR=Math.min(W,H)*.17;
+  const grow=seg(p,.05,.35),orb=seg(p,.55,.85),fade=seg(p,.45,.7);
+  document.getElementById('face').style.opacity=1-fade*.9;
+  document.getElementById('face').style.transform=`translate(-50%,-50%) scale(${1-fade*.2})`;
+  // cables
+  cables.forEach((k,i)=>{
+    const hx=cx+Math.cos(k.a)*headR*.9,hy=cy+Math.sin(k.a)*headR*1.05;
+    const sd=Math.cos(k.a)<0?-1:1;let ex,ey;if(k.edge<2){ex=sd<0?-50:W+50;ey=H*(.1+k.ex*.9)}else{ex=sd<0?W*k.ex*.35:W*(1-k.ex*.35);ey=H+50}
+    // when orb forms, cables converge into the orb center
+    const ox=cx,oy=H*.5;const tx=ex+(ox-ex)*orb*.0,ty=ey;
+    const sx=hx+(ox-hx)*orb,sy=hy+(oy-hy)*orb;
+    const len=grow;
+    const side=Math.sign(sx-cx)||1;const c1x=sx+side*headR*(1.2+k.pulse)+Math.sin(t+k.ph)*25*DPR,c1y=sy-headR*.6,c2x=tx+(sx-tx)*.25,c2y=ty-H*.15;
+    c.strokeStyle='#0b0b0c';c.lineWidth=k.w*DPR*.6;c.lineCap='round';
+    c.beginPath();c.moveTo(sx,sy);
+    const steps=40;for(let s=1;s<=steps*len;s++){const u=s/steps,x=(1-u)**3*sx+3*(1-u)**2*u*c1x+3*(1-u)*u*u*c2x+u**3*tx,y=(1-u)**3*sy+3*(1-u)**2*u*c1y+3*(1-u)*u*u*c2y+u**3*ty;c.lineTo(x,y)}
+    c.stroke();
+    // pulse of light travelling along cable
+    if(len>.9){const u=((t*.25+k.pulse)%1),x=(1-u)**3*tx+3*(1-u)**2*u*c2x+3*(1-u)*u*u*c1x+u**3*sx,y=(1-u)**3*ty+3*(1-u)**2*u*c2y+3*(1-u)*u*u*c1y+u**3*sy;
+      c.fillStyle='#1d6bff';c.shadowColor='#1d6bff';c.shadowBlur=18*DPR;c.beginPath();c.arc(x,y,3*DPR,0,7);c.fill();c.shadowBlur=0}
+    // connector plug at head
+    c.fillStyle='#222';c.beginPath();c.arc(sx,sy,k.w*DPR*.8,0,7);c.fill();
+  });
+  // orb
+  if(orb>0){const R=Math.min(W,H)*.2*orb,ox=cx,oy=H*.5,ry=t*.4,rx=.4;
+    c.save();for(const q of S){let[x,y,z]=q;let x1=x*Math.cos(ry)-z*Math.sin(ry),z1=x*Math.sin(ry)+z*Math.cos(ry);let y1=y*Math.cos(rx)-z1*Math.sin(rx),z2=y*Math.sin(rx)+z1*Math.cos(rx);
+      const d=(z2+1.6)/2.6,px=ox+x1*R,py=oy+y1*R;c.fillStyle=`rgba(${30+d*80},${110+d*90},255,${.25+d*.75})`;c.fillRect(px,py,2*DPR*d,2*DPR*d);
+      if(Math.random()<.004*orb){c.strokeStyle='rgba(120,180,255,.5)';c.lineWidth=1;c.beginPath();c.moveTo(px,py);c.lineTo(ox+x1*R*1.6,oy+y1*R*1.6);c.stroke()}}
+    const g=c.createRadialGradient(ox,oy,0,ox,oy,R*1.3);g.addColorStop(0,'rgba(29,107,255,.55)');g.addColorStop(1,'rgba(29,107,255,0)');c.fillStyle=g;c.beginPath();c.arc(ox,oy,R*1.3,0,7);c.fill();c.restore()}
+  document.getElementById('w1').classList.toggle('on',p>.02&&p<.5);
+  document.getElementById('w2').classList.toggle('on',p>.6);
+  const phase=p<.3?0:p<.55?1:p<.8?2:3;
+  document.querySelectorAll('#meter div').forEach((d,i)=>d.classList.toggle('on',i<=phase));
+  document.getElementById('cap').innerHTML=['<b>Фаза 1.</b> Интерфейс считывает 86 миллиардов нейронов. Листайте, чтобы подключиться.','<b>Фаза 2.</b> Связь установлена. Каждая мысль превращается в сигнал.','<b>Фаза 3.</b> Сигналы сливаются в единый поток сознания.','<b>Фаза 4.</b> Вы — часть сети. Добро пожаловать.'][phase];
+  requestAnimationFrame(frame)}
+frame();
+</script>
+</body>
+</html>
